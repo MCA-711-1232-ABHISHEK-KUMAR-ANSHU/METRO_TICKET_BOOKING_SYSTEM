@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+<title>Passenger Feedback</title>
+
+<link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+
+</head>
+
+<body>
+
+<header>
+<h1>Passenger Feedback</h1>
+</header>
+
+{% include 'partials/admin_nav.html' %}
+
+<div class="page-wrap">
+
+<div class="section-box">
+
+<form id="filterForm" novalidate>
+
+<label>Filter by Rating</label>
+<select id="ratingFilter">
+<option value="">All Ratings</option>
+<option value="5" {% if rating_filter == '5' %}selected{% endif %}>5 - Excellent</option>
+<option value="4" {% if rating_filter == '4' %}selected{% endif %}>4 - Good</option>
+<option value="3" {% if rating_filter == '3' %}selected{% endif %}>3 - Average</option>
+<option value="2" {% if rating_filter == '2' %}selected{% endif %}>2 - Poor</option>
+<option value="1" {% if rating_filter == '1' %}selected{% endif %}>1 - Very Poor</option>
+</select>
+
+<button type="submit">Filter</button>
+
+</form>
+
+</div>
+
+<div class="section-box">
+
+<table>
+<tr>
+<th>ID</th>
+<th>Passenger</th>
+<th>Rating</th>
+<th>Message</th>
+<th>Submitted On</th>
+</tr>
+
+{% for f in feedback_list %}
+<tr>
+<td>{{ f.feedback_id }}</td>
+<td>{{ f.passenger_name }}</td>
+<td>{{ f.rating }}</td>
+<td>{{ f.message }}</td>
+<td>{{ f.submitted_on }}</td>
+</tr>
+{% endfor %}
+
+</table>
+
+{% if not feedback_list %}
+<p class="center">No feedback found.</p>
+{% endif %}
+
+</div>
+
+</div>
+
+<script>
+
+document.getElementById("filterForm").addEventListener("submit", function(e){
+
+e.preventDefault()
+
+let rating = document.getElementById("ratingFilter").value
+let params = rating ? "?rating="+rating : ""
+
+window.location.href = "/admin/feedback"+params
+
+})
+
+</script>
+
+</body>
+
+</html>

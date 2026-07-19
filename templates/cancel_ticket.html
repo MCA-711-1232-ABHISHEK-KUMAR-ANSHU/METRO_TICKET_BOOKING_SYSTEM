@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+<title>Cancel Ticket</title>
+
+<link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+
+</head>
+
+<body>
+
+<header>
+<h1>Cancel Ticket</h1>
+</header>
+
+{% include 'partials/nav.html' %}
+
+<div class="container">
+
+<h2>Cancel Ticket #{{ ticket.ticket_id }}</h2>
+
+<div class="ticket-row">
+<span class="ticket-label">From</span>
+<span class="ticket-value">{{ ticket.from_station }}</span>
+</div>
+
+<div class="ticket-row">
+<span class="ticket-label">To</span>
+<span class="ticket-value">{{ ticket.to_station }}</span>
+</div>
+
+<div class="ticket-row">
+<span class="ticket-label">Travel Date</span>
+<span class="ticket-value">{{ ticket.travel_date }}</span>
+</div>
+
+<div class="ticket-row">
+<span class="ticket-label">Fare Paid</span>
+<span class="ticket-value">&#8377;{{ ticket.fare }}</span>
+</div>
+
+<div class="ticket-row">
+<span class="ticket-label">Estimated Refund</span>
+<span class="ticket-value">&#8377;{{ estimated_refund }}</span>
+</div>
+
+<p style="font-size:12px;color:#666;">
+Refund policy: 80% refund if cancelled more than a day before travel,
+50% refund if cancelled on or one day before travel, no refund after the travel date.
+</p>
+
+<form id="cancelForm" novalidate>
+
+<label>Reason for cancellation</label>
+<select id="reason" required>
+<option value="">Select a reason</option>
+<option value="Change of plan">Change of plan</option>
+<option value="Booked by mistake">Booked by mistake</option>
+<option value="Found alternate transport">Found alternate transport</option>
+<option value="Other">Other</option>
+</select>
+<div class="error-text" id="reasonError"></div>
+
+<button type="submit" class="danger">Confirm Cancellation</button>
+<a href="/ticket/{{ ticket.ticket_id }}"><button type="button" class="secondary">Go Back</button></a>
+
+</form>
+
+</div>
+
+<script>
+
+document.getElementById("cancelForm").addEventListener("submit", function(e){
+
+e.preventDefault()
+
+document.querySelectorAll(".error-text").forEach(el => el.innerText = "")
+
+let reason = document.getElementById("reason").value
+
+if(!reason){
+    document.getElementById("reasonError").innerText = "Please select a reason"
+    return
+}
+
+fetch("/cancel-ticket/{{ ticket.ticket_id }}",{
+
+method:"POST",
+headers:{"Content-Type":"application/json"},
+body:JSON.stringify({reason:reason})
+
+})
+
+.then(res=>res.json())
+.then(data=>{
+
+if(data.refund_amount !== undefined){
+    alert("Ticket cancelled. Refund amount: \u20b9" + data.refund_amount)
+    window.location.href="/my-tickets"
+} else {
+    alert(data.message)
+}
+
+})
+
+})
+
+</script>
+
+</body>
+
+</html>

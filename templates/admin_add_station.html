@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+<title>Add Station</title>
+
+<link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+
+</head>
+
+<body>
+
+<header>
+<h1>Add Station</h1>
+</header>
+
+{% include 'partials/admin_nav.html' %}
+
+<div class="container">
+
+<h2>Add New Station</h2>
+
+<form id="addStationForm" novalidate>
+
+<label>Station Name</label>
+<input type="text" id="stationName" required minlength="2">
+<div class="error-text" id="stationNameError"></div>
+
+<label>Location</label>
+<input type="text" id="location" placeholder="e.g. Patna">
+
+<button type="submit">Add Station</button>
+<a href="/admin/stations"><button type="button" class="secondary">Cancel</button></a>
+
+</form>
+
+</div>
+
+<script>
+
+document.getElementById("addStationForm").addEventListener("submit", function(e){
+
+e.preventDefault()
+
+document.getElementById("stationNameError").innerText = ""
+
+let stationName = document.getElementById("stationName").value.trim()
+let location = document.getElementById("location").value.trim()
+
+if(stationName.length < 2){
+    document.getElementById("stationNameError").innerText = "Station name is required"
+    return
+}
+
+fetch("/admin/stations/add",{
+
+method:"POST",
+headers:{"Content-Type":"application/json"},
+body:JSON.stringify({station_name:stationName, location:location})
+
+})
+
+.then(res=>res.json())
+.then(data=>{
+alert(data.message)
+window.location.href="/admin/stations"
+})
+
+})
+
+</script>
+
+</body>
+
+</html>

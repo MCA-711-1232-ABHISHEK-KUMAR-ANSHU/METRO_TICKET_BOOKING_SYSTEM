@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+<title>Metro Ticket System</title>
+
+<link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+
+</head>
+
+<body>
+
+<header>
+<h1>Patna Metro Ticket Booking</h1>
+</header>
+
+<div class="container center">
+
+<h2>Welcome</h2>
+
+<p>Book your Metro tickets easily, manage your travels and travel hassle-free.</p>
+
+<br>
+
+{% if logged_in %}
+
+<a href="/dashboard"><button>Go to Dashboard</button></a>
+<br><br>
+<a href="/book-page"><button class="secondary">Book a Ticket</button></a>
+
+{% else %}
+
+<a href="/register-page"><button>Register</button></a>
+<br><br>
+<a href="/login-page"><button class="secondary">Login</button></a>
+
+{% endif %}
+
+<br><br>
+
+<a href="/search-ticket-page">Search a ticket</a> &nbsp;|&nbsp;
+<a href="/contact-page">Contact Us</a> &nbsp;|&nbsp;
+<a href="/admin-login-page">Admin Login</a> &nbsp;|&nbsp;
+<a href="/scan-page">Gate QR Scanner</a>
+
+</div>
+
+</body>
+</html>

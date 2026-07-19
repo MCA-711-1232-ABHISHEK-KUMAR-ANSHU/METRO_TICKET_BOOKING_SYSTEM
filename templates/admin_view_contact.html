@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+<title>Contact Messages</title>
+
+<link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+
+</head>
+
+<body>
+
+<header>
+<h1>Contact Us Messages</h1>
+</header>
+
+{% include 'partials/admin_nav.html' %}
+
+<div class="page-wrap">
+
+<div class="section-box">
+
+<form id="searchForm" novalidate>
+
+<label>Search by Email</label>
+<input type="text" id="emailFilter" value="{{ email_filter }}" placeholder="e.g. user@example.com">
+
+<button type="submit">Search</button>
+
+</form>
+
+</div>
+
+<div class="section-box">
+
+<table>
+<tr>
+<th>ID</th>
+<th>Name</th>
+<th>Email</th>
+<th>Subject</th>
+<th>Message</th>
+<th>Submitted On</th>
+</tr>
+
+{% for m in messages %}
+<tr>
+<td>{{ m.message_id }}</td>
+<td>{{ m.name }}</td>
+<td>{{ m.email }}</td>
+<td>{{ m.subject or '-' }}</td>
+<td>{{ m.message }}</td>
+<td>{{ m.submitted_on }}</td>
+</tr>
+{% endfor %}
+
+</table>
+
+{% if not messages %}
+<p class="center">No messages found.</p>
+{% endif %}
+
+</div>
+
+</div>
+
+<script>
+
+document.getElementById("searchForm").addEventListener("submit", function(e){
+
+e.preventDefault()
+
+let email = document.getElementById("emailFilter").value.trim()
+let params = email ? "?email="+encodeURIComponent(email) : ""
+
+window.location.href = "/admin/contact-messages"+params
+
+})
+
+</script>
+
+</body>
+
+</html>

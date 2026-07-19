@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+<title>Book Ticket</title>
+
+<link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+
+</head>
+
+<body>
+
+<header>
+<h1>Book Metro Ticket</h1>
+</header>
+
+{% include 'partials/nav.html' %}
+
+<div class="container">
+
+<h2>Book Ticket</h2>
+
+<form id="bookForm" novalidate>
+
+<label>From Station</label>
+<select id="from" required></select>
+<div class="error-text" id="fromError"></div>
+
+<label>To Station</label>
+<select id="to" required></select>
+<div class="error-text" id="toError"></div>
+
+<label>Travel Date</label>
+<input type="date" id="date" required>
+<div class="error-text" id="dateError"></div>
+
+<p id="fareDisplay" style="text-align:center;font-weight:bold;"></p>
+
+<button type="submit">Book Ticket</button>
+
+</form>
+
+</div>
+
+<script>
+
+let today = new Date().toISOString().split("T")[0]
+document.getElementById("date").setAttribute("min", today)
+
+fetch("/stations")
+
+.then(res=>res.json())
+
+.then(stations=>{
+
+let from=document.getElementById("from")
+let to=document.getElementById("to")
+
+let placeholder1 = document.createElement("option")
+placeholder1.text = "Select station"
+placeholder1.value = ""
+from.add(placeholder1)
+
+let placeholder2 = document.createElement("option")
+placeholder2.text = "Select station"
+placeholder2.value = ""
+to.add(placeholder2)
+
+stations.forEach(station=>{
+
+let option1=document.createElement("option")
+option1.value=station.station_id
+option1.text=station.station_name
+
+let option2=document.createElement("option")
+option2.value=station.station_id
+option2.text=station.station_name
+
+from.add(option1)
+to.add(option2)
+
+})
+
+})
+
+function calculateFare(){
+
+let from=document.getElementById("from").value
+let to=document.getElementById("to").value
+
+if(from && to && from !== to){
+
+let fare=Math.abs(from-to)*10
+
+document.getElementById("fareDisplay").innerText="Estimated Fare: \u20b9"+fare+" (final fare confirmed on booking)"
+
+} else {
+    document.getElementById("fareDisplay").innerText = ""
+}
+
+}
+
+document.getElementById("from").addEventListener("change",calculateFare)
+document.getElementById("to").addEventListener("change",calculateFare)
+
+document.getElementById("bookForm").addEventListener("submit", function(e){
+
+e.preventDefault()
+
+document.querySelectorAll(".error-text").forEach(el => el.innerText = "")
+
+let from = document.getElementById("from").value
+let to = document.getElementById("to").value
+let dateVal = document.getElementById("date").value
+
+let valid = true
+
+if(!from){
+    document.getElementById("fromError").innerText = "Please select a from station"
+    valid = false
+}
+
+if(!to){
+    document.getElementById("toError").innerText = "Please select a to station"
+    valid = false
+}
+
+if(from && to && from === to){
+    document.getElementById("toError").innerText = "From and To stations cannot be the same"
+    valid = false
+}
+
+if(!dateVal){
+    document.getElementById("dateError").innerText = "Please select a travel date"
+    valid = false
+} else if(dateVal < today){
+    document.getElementById("dateError").innerText = "Travel date cannot be in the past"
+    valid = false
+}
+
+if(!valid) return
+
+fetch("/book-ticket",{
+
+method:"POST",
+
+headers:{
+"Content-Type":"application/json"
+},
+
+body:JSON.stringify({
+
+from_station:from,
+to_station:to,
+travel_date:dateVal
+
+})
+
+})
+
+.then(res=>res.json())
+
+.then(data=>{
+
+if(data.ticket_id){
+
+window.location.href="/ticket/"+data.ticket_id
+
+}
+
+else{
+
+alert(data.message)
+
+}
+
+})
+
+})
+
+</script>
+
+</body>
+
+</html>

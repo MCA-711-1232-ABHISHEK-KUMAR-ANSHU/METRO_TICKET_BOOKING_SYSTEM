@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+<title>Feedback</title>
+
+<link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+
+</head>
+
+<body>
+
+<header>
+<h1>Feedback</h1>
+</header>
+
+{% include 'partials/nav.html' %}
+
+<div class="container">
+
+<h2>Share Your Feedback</h2>
+
+<form id="feedbackForm" novalidate>
+
+<label>Rating</label>
+<select id="rating" required>
+<option value="">Select rating</option>
+<option value="5">5 - Excellent</option>
+<option value="4">4 - Good</option>
+<option value="3">3 - Average</option>
+<option value="2">2 - Poor</option>
+<option value="1">1 - Very Poor</option>
+</select>
+<div class="error-text" id="ratingError"></div>
+
+<label>Your Message</label>
+<textarea id="message" rows="4" placeholder="Tell us about your experience" required minlength="5"></textarea>
+<div class="error-text" id="messageError"></div>
+
+<button type="submit">Submit Feedback</button>
+
+</form>
+
+</div>
+
+<script>
+
+document.getElementById("feedbackForm").addEventListener("submit", function(e){
+
+e.preventDefault()
+
+document.querySelectorAll(".error-text").forEach(el => el.innerText = "")
+
+let rating = document.getElementById("rating").value
+let message = document.getElementById("message").value.trim()
+
+let valid = true
+
+if(!rating){
+    document.getElementById("ratingError").innerText = "Please select a rating"
+    valid = false
+}
+
+if(message.length < 5){
+    document.getElementById("messageError").innerText = "Please write a short message"
+    valid = false
+}
+
+if(!valid) return
+
+fetch("/feedback",{
+
+method:"POST",
+headers:{"Content-Type":"application/json"},
+body:JSON.stringify({rating:rating, message:message})
+
+})
+
+.then(res=>res.json())
+.then(data=>{
+alert(data.message)
+document.getElementById("feedbackForm").reset()
+})
+
+})
+
+</script>
+
+</body>
+
+</html>

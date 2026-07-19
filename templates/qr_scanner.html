@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+<title>Gate QR Scanner</title>
+
+<link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+<script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
+
+</head>
+
+<body>
+
+<header>
+<h1>Metro Gate - QR Scanner</h1>
+</header>
+
+<div class="container">
+
+<h2>Scan Ticket</h2>
+
+<div id="qr-reader"></div>
+
+<p class="center" style="font-size:12px;color:#666;">
+If the camera is not available, enter the ticket ID manually below.
+</p>
+
+<form id="manualForm" novalidate>
+
+<label>Ticket ID</label>
+<input type="number" id="manualTicketId" min="1" placeholder="Enter Ticket ID">
+<div class="error-text" id="manualError"></div>
+
+<button type="submit" class="secondary">Verify Manually</button>
+
+</form>
+
+<div id="result"></div>
+
+</div>
+
+<script>
+
+function showResult(data){
+
+let box = document.getElementById("result")
+
+if(data.valid){
+    box.innerHTML = `
+        <div class="scan-result scan-success">
+            <h3>${data.message}</h3>
+            <p>Ticket #${data.ticket.ticket_id} : ${data.ticket.from_station} &rarr; ${data.ticket.to_station}</p>
+        </div>
+    `
+} else {
+    box.innerHTML = `
+        <div class="scan-result scan-fail">
+            <h3>${data.message}</h3>
+        </div>
+    `
+}
+
+}
+
+function verifyTicket(rawValue){
+
+fetch("/verify-ticket",{
+
+method:"POST",
+headers:{"Content-Type":"application/json"},
+body:JSON.stringify({ticket_data:rawValue})
+
+})
+
+.then(res=>res.json())
+.then(data=>showResult(data))
+
+}
+
+document.getElementById("manualForm").addEventListener("submit", function(e){
+
+e.preventDefault()
+
+document.getElementById("manualError").innerText = ""
+
+let ticketId = document.getElementById("manualTicketId").value.trim()
+
+if(!ticketId){
+    document.getElementById("manualError").innerText = "Please enter a ticket ID"
+    return
+}
+
+verifyTicket(ticketId)
+
+})
+
+try{
+
+let scanner = new Html5Qrcode("qr-reader")
+
+scanner.start(
+    { facingMode: "environment" },
+    { fps: 10, qrbox: 220 },
+    (decodedText) => {
+        verifyTicket(decodedText)
+    },
+    (errorMessage) => {
+        // ignore continuous scan errors
+    }
+).catch((err) => {
+    document.getElementById("qr-reader").innerHTML =
+        "<p style='font-size:13px;color:#888;text-align:center;'>Camera not available. Use manual entry below.</p>"
+})
+
+}catch(e){
+
+document.getElementById("qr-reader").innerHTML =
+    "<p style='font-size:13px;color:#888;text-align:center;'>Camera not available. Use manual entry below.</p>"
+
+}
+
+</script>
+
+</body>
+
+</html>

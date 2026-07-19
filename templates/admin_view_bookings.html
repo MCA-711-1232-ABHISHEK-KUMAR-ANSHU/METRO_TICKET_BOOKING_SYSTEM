@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+<title>All Bookings</title>
+
+<link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+
+</head>
+
+<body>
+
+<header>
+<h1>All Bookings</h1>
+</header>
+
+{% include 'partials/admin_nav.html' %}
+
+<div class="page-wrap">
+
+<div class="section-box">
+
+<table>
+<tr>
+<th>Ticket ID</th>
+<th>Passenger</th>
+<th>From</th>
+<th>To</th>
+<th>Date</th>
+<th>Fare</th>
+<th>Status</th>
+</tr>
+
+{% for t in tickets %}
+<tr>
+<td>{{ t.ticket_id }}</td>
+<td>{{ t.passenger_name }}</td>
+<td>{{ t.from_station }}</td>
+<td>{{ t.to_station }}</td>
+<td>{{ t.travel_date }}</td>
+<td>&#8377;{{ t.fare }}</td>
+<td>
+{% if t.status == 'BOOKED' %}
+<span class="badge badge-booked">BOOKED</span>
+{% elif t.status == 'USED' %}
+<span class="badge badge-used">USED</span>
+{% else %}
+<span class="badge badge-cancelled">CANCELLED</span>
+{% endif %}
+</td>
+</tr>
+{% endfor %}
+
+</table>
+
+</div>
+
+</div>
+
+</body>
+
+</html>

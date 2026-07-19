@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+<title>Not Found</title>
+
+<link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+
+</head>
+
+<body>
+
+<header>
+<h1>Metro Ticket System</h1>
+</header>
+
+<div class="container center">
+
+<h2>Oops!</h2>
+
+<p>{{ reason or "Something went wrong" }}</p>
+
+<a href="/"><button>Back to Home</button></a>
+
+</div>
+
+</body>
+
+</html>

@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+<title>Edit Route</title>
+
+<link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+
+</head>
+
+<body>
+
+<header>
+<h1>Edit Route</h1>
+</header>
+
+{% include 'partials/admin_nav.html' %}
+
+<div class="container">
+
+<h2>Edit Route &amp; Fare</h2>
+
+<form id="editRouteForm" novalidate>
+
+<label>Route Name</label>
+<input type="text" id="routeName" value="{{ route.route_name }}" required minlength="3">
+<div class="error-text" id="routeNameError"></div>
+
+<label>Start Station</label>
+<select id="startStation" required>
+{% for s in stations %}
+<option value="{{ s.station_id }}" {% if s.station_id == route.start_station %}selected{% endif %}>{{ s.station_name }}</option>
+{% endfor %}
+</select>
+
+<label>End Station</label>
+<select id="endStation" required>
+{% for s in stations %}
+<option value="{{ s.station_id }}" {% if s.station_id == route.end_station %}selected{% endif %}>{{ s.station_name }}</option>
+{% endfor %}
+</select>
+<div class="error-text" id="endStationError"></div>
+
+<label>Fare (&#8377;)</label>
+<input type="number" id="fare" min="0" value="{{ route.fare }}" required>
+<div class="error-text" id="fareError"></div>
+
+<button type="submit">Save Changes</button>
+<a href="/admin/routes"><button type="button" class="secondary">Cancel</button></a>
+
+</form>
+
+</div>
+
+<script>
+
+document.getElementById("editRouteForm").addEventListener("submit", function(e){
+
+e.preventDefault()
+
+document.querySelectorAll(".error-text").forEach(el => el.innerText = "")
+
+let routeName = document.getElementById("routeName").value.trim()
+let startStation = document.getElementById("startStation").value
+let endStation = document.getElementById("endStation").value
+let fare = document.getElementById("fare").value
+
+let valid = true
+
+if(routeName.length < 3){
+    document.getElementById("routeNameError").innerText = "Route name is required"
+    valid = false
+}
+
+if(startStation === endStation){
+    document.getElementById("endStationError").innerText = "Start and end stations cannot be the same"
+    valid = false
+}
+
+if(fare === "" || fare < 0){
+    document.getElementById("fareError").innerText = "Please enter a valid fare"
+    valid = false
+}
+
+if(!valid) return
+
+fetch("/admin/routes/edit/{{ route.route_id }}",{
+
+method:"POST",
+headers:{"Content-Type":"application/json"},
+body:JSON.stringify({
+route_name:routeName,
+start_station:startStation,
+end_station:endStation,
+fare:fare
+})
+
+})
+
+.then(res=>res.json())
+.then(data=>{
+alert(data.message)
+window.location.href="/admin/routes"
+})
+
+})
+
+</script>
+
+</body>
+
+</html>

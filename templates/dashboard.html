@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+<title>Dashboard</title>
+
+<link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+
+</head>
+
+<body>
+
+<header>
+<h1>My Dashboard</h1>
+</header>
+
+{% include 'partials/nav.html' %}
+
+<div class="page-wrap">
+
+<h2>Welcome, {{ name }}</h2>
+
+<div class="cards">
+
+<div class="card">
+<div class="num">{{ stats.total_tickets or 0 }}</div>
+<div class="label">Total Tickets</div>
+</div>
+
+<div class="card">
+<div class="num">{{ stats.upcoming or 0 }}</div>
+<div class="label">Upcoming</div>
+</div>
+
+<div class="card">
+<div class="num">{{ stats.completed or 0 }}</div>
+<div class="label">Completed</div>
+</div>
+
+<div class="card">
+<div class="num">{{ stats.cancelled or 0 }}</div>
+<div class="label">Cancelled</div>
+</div>
+
+</div>
+
+<div class="section-box">
+
+<div class="flex-between">
+<h3>Recent Travels</h3>
+<a href="/my-tickets">View All</a>
+</div>
+
+{% if recent %}
+<table>
+<tr>
+<th>Ticket ID</th>
+<th>From</th>
+<th>To</th>
+<th>Date</th>
+<th>Fare</th>
+<th>Status</th>
+<th></th>
+</tr>
+
+{% for t in recent %}
+<tr>
+<td>{{ t.ticket_id }}</td>
+<td>{{ t.from_station }}</td>
+<td>{{ t.to_station }}</td>
+<td>{{ t.travel_date }}</td>
+<td>&#8377;{{ t.fare }}</td>
+<td>
+{% if t.status == 'BOOKED' %}
+<span class="badge badge-booked">BOOKED</span>
+{% elif t.status == 'USED' %}
+<span class="badge badge-used">USED</span>
+{% else %}
+<span class="badge badge-cancelled">CANCELLED</span>
+{% endif %}
+</td>
+<td><a href="/ticket/{{ t.ticket_id }}">View</a></td>
+</tr>
+{% endfor %}
+
+</table>
+{% else %}
+<p>You have not booked any tickets yet.</p>
+{% endif %}
+
+</div>
+
+</div>
+
+</body>
+
+</html>

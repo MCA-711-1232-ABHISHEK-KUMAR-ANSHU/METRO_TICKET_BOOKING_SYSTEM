@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+<title>Your Ticket</title>
+
+<link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+
+</head>
+
+<body>
+
+<header>
+<h1>Metro Ticket</h1>
+</header>
+
+<div class="ticket">
+
+<h2>Ticket Confirmed</h2>
+
+<div class="ticket-row">
+<span class="ticket-label">Ticket ID</span>
+<span class="ticket-value">{{ticket.ticket_id}}</span>
+</div>
+
+<div class="ticket-row">
+<span class="ticket-label">From</span>
+<span class="ticket-value">{{ticket.from_station}}</span>
+</div>
+
+<div class="ticket-row">
+<span class="ticket-label">To</span>
+<span class="ticket-value">{{ticket.to_station}}</span>
+</div>
+
+<div class="ticket-row">
+<span class="ticket-label">Travel Date</span>
+<span class="ticket-value">{{ticket.travel_date}}</span>
+</div>
+
+<div class="ticket-row">
+<span class="ticket-label">Fare</span>
+<span class="ticket-value">&#8377;{{ticket.fare}}</span>
+</div>
+
+<div class="ticket-row">
+<span class="ticket-label">Status</span>
+<span class="ticket-value">
+{% if ticket.status == 'BOOKED' %}
+<span class="badge badge-booked">BOOKED</span>
+{% elif ticket.status == 'USED' %}
+<span class="badge badge-used">USED</span>
+{% else %}
+<span class="badge badge-cancelled">CANCELLED</span>
+{% endif %}
+</span>
+</div>
+
+<div style="text-align:center;margin-top:20px;">
+<img src="/{{qr}}" width="150">
+<p>Scan at Metro Gate</p>
+</div>
+
+<a href="/ticket/{{ticket.ticket_id}}/pdf"><button>Download PDF</button></a>
+
+{% if ticket.status == 'BOOKED' %}
+<a href="/cancel-ticket-page/{{ticket.ticket_id}}"><button class="danger">Cancel Ticket</button></a>
+{% endif %}
+
+<a href="/dashboard"><button class="secondary">Back to Dashboard</button></a>
+
+</div>
+
+</body>
+
+</html>

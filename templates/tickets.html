@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+<title>My Tickets</title>
+
+<link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+
+</head>
+
+<body>
+
+<header>
+<h1>My Tickets</h1>
+</header>
+
+{% include 'partials/nav.html' %}
+
+<div class="page-wrap">
+
+<div class="section-box">
+
+{% if tickets %}
+<table>
+<tr>
+<th>Ticket ID</th>
+<th>From</th>
+<th>To</th>
+<th>Date</th>
+<th>Fare</th>
+<th>Status</th>
+<th>Actions</th>
+</tr>
+
+{% for ticket in tickets %}
+<tr>
+<td>{{ticket.ticket_id}}</td>
+<td>{{ticket.from_station}}</td>
+<td>{{ticket.to_station}}</td>
+<td>{{ticket.travel_date}}</td>
+<td>&#8377;{{ticket.fare}}</td>
+<td>
+{% if ticket.status == 'BOOKED' %}
+<span class="badge badge-booked">BOOKED</span>
+{% elif ticket.status == 'USED' %}
+<span class="badge badge-used">USED</span>
+{% else %}
+<span class="badge badge-cancelled">CANCELLED</span>
+{% endif %}
+</td>
+<td>
+<a href="/ticket/{{ticket.ticket_id}}">View</a>
+{% if ticket.status == 'BOOKED' %}
+&nbsp;|&nbsp;
+<a href="/cancel-ticket-page/{{ticket.ticket_id}}">Cancel</a>
+{% endif %}
+</td>
+</tr>
+{% endfor %}
+
+</table>
+{% else %}
+<p class="center">You have not booked any tickets yet.</p>
+{% endif %}
+
+</div>
+
+</div>
+
+</body>
+
+</html>

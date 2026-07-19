@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+<title>Admin Login</title>
+
+<link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+
+</head>
+
+<body>
+
+<header>
+<h1>Admin Login</h1>
+</header>
+
+<div class="container">
+
+<h2>Admin Login</h2>
+
+<form id="adminLoginForm" novalidate>
+
+<label>Email</label>
+<input type="email" id="email" required>
+<div class="error-text" id="emailError"></div>
+
+<label>Password</label>
+<input type="password" id="password" required>
+<div class="error-text" id="passwordError"></div>
+
+<button type="submit">Login</button>
+
+</form>
+
+<p class="center" style="font-size:12px;color:#888;">
+Default admin: admin@metro.com / admin123
+</p>
+
+<p class="center"><a href="/">Back to Home</a></p>
+
+</div>
+
+<script>
+
+document.getElementById("adminLoginForm").addEventListener("submit", function(e){
+
+e.preventDefault()
+
+document.querySelectorAll(".error-text").forEach(el => el.innerText = "")
+
+let email = document.getElementById("email").value.trim()
+let password = document.getElementById("password").value
+
+let valid = true
+
+if(!email){
+    document.getElementById("emailError").innerText = "Email is required"
+    valid = false
+}
+
+if(!password){
+    document.getElementById("passwordError").innerText = "Password is required"
+    valid = false
+}
+
+if(!valid) return
+
+fetch("/admin-login",{
+
+method:"POST",
+headers:{"Content-Type":"application/json"},
+body:JSON.stringify({email:email, password:password})
+
+})
+
+.then(res=>res.json())
+.then(data=>{
+
+if(data.message === "Login successful"){
+    window.location.href="/admin-dashboard"
+} else {
+    document.getElementById("passwordError").innerText = data.message
+}
+
+})
+
+})
+
+</script>
+
+</body>
+
+</html>

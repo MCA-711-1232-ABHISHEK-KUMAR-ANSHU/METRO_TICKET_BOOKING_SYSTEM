@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+<title>Manage Stations</title>
+
+<link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+
+</head>
+
+<body>
+
+<header>
+<h1>Manage Stations</h1>
+</header>
+
+{% include 'partials/admin_nav.html' %}
+
+<div class="page-wrap">
+
+<div class="section-box">
+
+<div class="flex-between">
+<h3>All Stations</h3>
+<a href="/admin/stations/add-page"><button class="small">+ Add Station</button></a>
+</div>
+
+<table>
+<tr>
+<th>ID</th>
+<th>Name</th>
+<th>Location</th>
+<th>Actions</th>
+</tr>
+
+{% for s in stations %}
+<tr>
+<td>{{ s.station_id }}</td>
+<td>{{ s.station_name }}</td>
+<td>{{ s.location or '-' }}</td>
+<td>
+<a href="/admin/stations/edit-page/{{ s.station_id }}">Edit</a>
+&nbsp;|&nbsp;
+<form class="delete-form" data-id="{{ s.station_id }}" style="display:inline">
+<button type="submit" class="small danger">Delete</button>
+</form>
+</td>
+</tr>
+{% endfor %}
+
+</table>
+
+</div>
+
+</div>
+
+<script>
+
+document.querySelectorAll(".delete-form").forEach(form=>{
+
+form.addEventListener("submit", function(e){
+
+e.preventDefault()
+
+if(!confirm("Delete this station? This cannot be undone.")) return
+
+let id = form.getAttribute("data-id")
+
+fetch("/admin/stations/delete/"+id, { method:"POST" })
+
+.then(res=>res.json())
+.then(data=>{
+alert(data.message)
+window.location.reload()
+})
+
+})
+
+})
+
+</script>
+
+</body>
+
+</html>

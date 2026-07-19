@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+<title>Search Ticket</title>
+
+<link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+
+</head>
+
+<body>
+
+<header>
+<h1>Search Ticket</h1>
+</header>
+
+<div class="container">
+
+<h2>Find Your Ticket</h2>
+
+<form id="searchForm" novalidate>
+
+<label>Ticket ID</label>
+<input type="number" id="ticketId" placeholder="Enter Ticket ID" required min="1">
+<div class="error-text" id="ticketIdError"></div>
+
+<button type="submit">Search</button>
+
+</form>
+
+<p class="center"><a href="/">Back to Home</a></p>
+
+</div>
+
+<script>
+
+document.getElementById("searchForm").addEventListener("submit", function(e){
+
+e.preventDefault()
+
+document.getElementById("ticketIdError").innerText = ""
+
+let ticketId = document.getElementById("ticketId").value.trim()
+
+if(!ticketId || ticketId <= 0){
+    document.getElementById("ticketIdError").innerText = "Please enter a valid ticket ID"
+    return
+}
+
+fetch("/search-ticket",{
+
+method:"POST",
+headers:{"Content-Type":"application/json"},
+body:JSON.stringify({ticket_id:ticketId})
+
+})
+
+.then(res=>res.json())
+.then(data=>{
+
+if(data.redirect){
+    window.location.href = data.redirect
+} else {
+    document.getElementById("ticketIdError").innerText = data.message
+}
+
+})
+
+})
+
+</script>
+
+</body>
+
+</html>

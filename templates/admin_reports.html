@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+<title>Reports</title>
+
+<link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+
+</head>
+
+<body>
+
+<header>
+<h1>Revenue Report</h1>
+</header>
+
+{% include 'partials/admin_nav.html' %}
+
+<div class="page-wrap">
+
+<div class="section-box">
+
+<form id="reportForm" novalidate>
+
+<label>Start Date</label>
+<input type="date" id="startDate" value="{{ start_date }}">
+
+<label>End Date</label>
+<input type="date" id="endDate" value="{{ end_date }}">
+<div class="error-text" id="dateError"></div>
+
+<button type="submit">Filter</button>
+
+</form>
+
+</div>
+
+<div class="section-box">
+
+<h3>Total Revenue: &#8377;{{ total_revenue }}</h3>
+
+<table>
+<tr>
+<th>Ticket ID</th>
+<th>Travel Date</th>
+<th>Fare</th>
+<th>Status</th>
+</tr>
+
+{% for t in tickets %}
+<tr>
+<td>{{ t.ticket_id }}</td>
+<td>{{ t.travel_date }}</td>
+<td>&#8377;{{ t.fare }}</td>
+<td>{{ t.status }}</td>
+</tr>
+{% endfor %}
+
+</table>
+
+</div>
+
+</div>
+
+<script>
+
+document.getElementById("reportForm").addEventListener("submit", function(e){
+
+e.preventDefault()
+
+document.getElementById("dateError").innerText = ""
+
+let startDate = document.getElementById("startDate").value
+let endDate = document.getElementById("endDate").value
+
+if(startDate && endDate && startDate > endDate){
+    document.getElementById("dateError").innerText = "Start date cannot be after end date"
+    return
+}
+
+let params = ""
+if(startDate && endDate){
+    params = "?start_date="+startDate+"&end_date="+endDate
+}
+
+window.location.href = "/admin/reports"+params
+
+})
+
+</script>
+
+</body>
+
+</html>

@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+<title>Edit Profile</title>
+
+<link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+
+</head>
+
+<body>
+
+<header>
+<h1>Edit Profile</h1>
+</header>
+
+{% include 'partials/nav.html' %}
+
+<div class="container">
+
+<h2>My Profile</h2>
+
+<form id="profileForm" novalidate>
+
+<label>Name</label>
+<input type="text" id="name" value="{{ passenger.name }}" required minlength="3">
+<div class="error-text" id="nameError"></div>
+
+<label>Phone</label>
+<input type="text" id="phone" value="{{ passenger.phone or '' }}" pattern="[0-9]{10}" placeholder="10 digit phone number">
+<div class="error-text" id="phoneError"></div>
+
+<button type="submit">Save Changes</button>
+
+</form>
+
+</div>
+
+<script>
+
+document.getElementById("profileForm").addEventListener("submit", function(e){
+
+e.preventDefault()
+
+document.querySelectorAll(".error-text").forEach(el => el.innerText = "")
+
+let name = document.getElementById("name").value.trim()
+let phone = document.getElementById("phone").value.trim()
+
+let valid = true
+
+if(name.length < 3){
+    document.getElementById("nameError").innerText = "Name must be at least 3 characters"
+    valid = false
+}
+
+if(phone && !/^[0-9]{10}$/.test(phone)){
+    document.getElementById("phoneError").innerText = "Phone number must be 10 digits"
+    valid = false
+}
+
+if(!valid) return
+
+fetch("/edit-profile",{
+
+method:"POST",
+headers:{"Content-Type":"application/json"},
+body:JSON.stringify({name:name, phone:phone})
+
+})
+
+.then(res=>res.json())
+.then(data=>{
+alert(data.message)
+})
+
+})
+
+</script>
+
+</body>
+
+</html>

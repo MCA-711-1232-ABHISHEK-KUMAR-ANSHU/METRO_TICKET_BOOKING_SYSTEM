@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+<title>Cancellations</title>
+
+<link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+
+</head>
+
+<body>
+
+<header>
+<h1>Cancellations &amp; Refunds</h1>
+</header>
+
+{% include 'partials/admin_nav.html' %}
+
+<div class="page-wrap">
+
+<div class="section-box">
+
+<table>
+<tr>
+<th>ID</th>
+<th>Ticket ID</th>
+<th>Passenger</th>
+<th>Reason</th>
+<th>Refund</th>
+<th>Cancelled On</th>
+</tr>
+
+{% for c in cancellations %}
+<tr>
+<td>{{ c.cancellation_id }}</td>
+<td>{{ c.ticket_id }}</td>
+<td>{{ c.passenger_name }}</td>
+<td>{{ c.reason }}</td>
+<td>&#8377;{{ c.refund_amount }}</td>
+<td>{{ c.cancelled_on }}</td>
+</tr>
+{% endfor %}
+
+</table>
+
+</div>
+
+</div>
+
+</body>
+
+</html>

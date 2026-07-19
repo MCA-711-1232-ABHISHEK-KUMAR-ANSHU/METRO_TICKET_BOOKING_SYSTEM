@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+<title>Manage Routes &amp; Fares</title>
+
+<link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+
+</head>
+
+<body>
+
+<header>
+<h1>Manage Routes &amp; Fares</h1>
+</header>
+
+{% include 'partials/admin_nav.html' %}
+
+<div class="page-wrap">
+
+<div class="section-box">
+
+<div class="flex-between">
+<h3>All Routes</h3>
+<a href="/admin/routes/add-page"><button class="small">+ Add Route</button></a>
+</div>
+
+<table>
+<tr>
+<th>ID</th>
+<th>Route Name</th>
+<th>Start</th>
+<th>End</th>
+<th>Fare</th>
+<th>Actions</th>
+</tr>
+
+{% for r in routes %}
+<tr>
+<td>{{ r.route_id }}</td>
+<td>{{ r.route_name }}</td>
+<td>{{ r.start_station }}</td>
+<td>{{ r.end_station }}</td>
+<td>&#8377;{{ r.fare }}</td>
+<td>
+<a href="/admin/routes/edit-page/{{ r.route_id }}">Edit</a>
+&nbsp;|&nbsp;
+<form class="delete-form" data-id="{{ r.route_id }}" style="display:inline">
+<button type="submit" class="small danger">Delete</button>
+</form>
+</td>
+</tr>
+{% endfor %}
+
+</table>
+
+</div>
+
+</div>
+
+<script>
+
+document.querySelectorAll(".delete-form").forEach(form=>{
+
+form.addEventListener("submit", function(e){
+
+e.preventDefault()
+
+if(!confirm("Delete this route? This cannot be undone.")) return
+
+let id = form.getAttribute("data-id")
+
+fetch("/admin/routes/delete/"+id, { method:"POST" })
+
+.then(res=>res.json())
+.then(data=>{
+alert(data.message)
+window.location.reload()
+})
+
+})
+
+})
+
+</script>
+
+</body>
+
+</html>
